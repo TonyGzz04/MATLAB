@@ -11,15 +11,15 @@ if cien_franjas == true
     img3 = imread('100_2.JPG');
     img4 = imread('100_3.JPG');
 else
-    img1 = imread('65_0.JPG');   % Read the image
-    img2 = imread('65_1.JPG');
-    img3 = imread('65_2.JPG');
-    img4 = imread('65_3.JPG');
+    img1 = imread('est1.JPG');   % Read the image
+    img2 = imread('est2.JPG');
+    img3 = imread('est3.JPG');
+    img4 = imread('est4.JPG');
     
-    simg1 = imread('s65_0.JPG');
-    simg2 = imread('s65_1.JPG');
-    simg3 = imread('s65_2.JPG');
-    simg4 = imread('s65_3.JPG');
+    simg1 = imread('sest1.JPG');
+    simg2 = imread('sest2.JPG');
+    simg3 = imread('sest3.JPG');
+    simg4 = imread('sest4.JPG');
 end
 
 
@@ -35,6 +35,7 @@ simg3 = im2double(rgb2gray(simg3));
 simg4 = im2double(rgb2gray(simg4));
 
 alpha = pi/2;
+d = 0.02;     % distancia entre franjas
 
 % phi = atan2( -(img2 - img4) , (img1 - img3));
 % phi = atan((img1-img3)./(sqrt(2)*(img2-img4)) - 1);
@@ -43,6 +44,23 @@ alpha = pi/2;
 
 phi = atan2( -(img2 - img4) , (img1 - img3));
 sphi = atan2( -(simg2 - simg4) , (simg1 - simg3));
+
+figure; imagesc(phi); colormap('gray');
+figure; imagesc(sphi);colormap('gray');
+figure; imagesc(phi - sphi);colormap('gray');
+
+
+fase_desenvuelta = unwrap_phase(phi-sphi);
+figure; imagesc(fase_desenvuelta);
+
+theta = atan2(1,3.27);    % 1 altura, 3.27 (metros)
+z = fase_desenvuelta/(2*pi) * d/sin(theta);
+
+
+
+
+
+%%
 
 figure;
 imshow(phi);  
@@ -66,16 +84,15 @@ sw3 = atan2(sin(sdphi3) , cos(sdphi3));
 
 
 % w = [w1; w2; w3];
+% phi8 = uint8(phi);
+% sphi8 = uint8(sphi);
 
-phi = (phi - min(phi(:))) / (max(phi(:)) - min(phi(:))) * 255;
-sphi = (sphi - min(sphi(:))) / (max(sphi(:)) - min(sphi(:))) * 255;
-phi8 = uint8(phi);
-sphi8 = uint8(sphi);
-
-figure;
-imshow(phi8 - sphi8);  
 
 final = phi - sphi;
+figure;
+imagesc(final);
+
+%%
 
 % q = unwrap(phi, [], 2);
 % plot3(0:size(q,1)-1, q(:,1), q(:,2), '.');
@@ -84,12 +101,11 @@ final = phi - sphi;
 q = unwrap_phase(final);
 % ssq = unwrap_phase(sphi);
 
-q8 = uint8(q);
+% q8 = uint8(q);
 % ssq8 = uint8(ssq);
 
 figure;
 imshow(q8)
-
 
 
 
