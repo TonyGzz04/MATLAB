@@ -51,9 +51,9 @@ print(gcf, 'fig1.svg', '-dsvg');
 close all;
 
 % Ventana numerica
-N = 5200; 
-w0 = 1E-3;    % [m]
-xmax = 3*w0; 
+N = 5568; 
+w0 = 3e-2;    % [m]
+xmax = 0.015; 
 lambda = 633E-9;   % [m]
 xs = xmax*(2/N)*(-N/2:N/2-1);
 ys = xmax*(2/N)*(-N/2:N/2-1);
@@ -63,7 +63,7 @@ GB = @(X,Y,w) exp(-(X.^2 + Y.^2)/w^2);
 BS = (1/sqrt(2))*[1 1i; 1i 1];
 
 % semilla
-U = GB(Xs, Ys, w0);
+U = 0.79 .* GB(Xs, Ys, w0);
 umax = max(abs(U(:)).^2);
 
 % Primer divisor
@@ -80,7 +80,7 @@ E5(N/2:end, :) = exp(1i*placa) * E5(N/2:end, :);
 
 % Vector de propagacion -- up
 k = 2*pi/lambda;
-thzu = 0.05*(pi/180);
+thzu = 0.009*(pi/180);
 thTu = 0.0;
 kxu = k * sin(thzu) * cos(thTu);
 kyu = k * sin(thzu) * sin(thTu);
@@ -109,15 +109,28 @@ E8 = BS(2,1)*E5 + BS(2,2)*E6;
 
 I7 = abs(E7).^2;
 
+I = zeros(size(I7));
+a = 215;
+
+for i = 1:size(I7,2)-a
+    I(:,i) = I7(:,i+a);
+end
+I(:,size(I7,2)-a-1:end) = 0;
+
+I(:,1:515) = 0;
+I(:,5035:end) = 0;
+
+
 figure;
-imagesc(I7);
+imagesc(I); ylim([928 4640])
+colormap('hot');
 
 a = N/2;
 
 figure; hold on;
-plot(I7(2690,:), '--');
-plot(p2(3072/2,:));
-xlim([0 size(I7,1)]); 
+plot(I(3072/2,:), '--');
+plot(p1(3072/2,:));
+xlim([0 size(I,1)]); 
 title('\textbf{Corte transversal de la imagen desde el Puerto 1}', 'FontSize', 17); 
 xlabel('Pixeles', 'FontSize', 17); ylabel('Intensidad normalizada', 'FontSize', 17);
 legend('Te\''orica', 'Experimental', 'FontSize', 14);
@@ -125,6 +138,26 @@ hold off;
 
 print(gcf, 'p1.svg', '-dsvg');
 
+error = p1(3072/2,:) - I(3072/2,:);
+vari = (error).^2 ./ size(p1,2);
+
+%% FILTRO
+
+clear; clc; close all;
+
+nor = im2double(rgb2gray(imread("normal1.JPG")));
+f1 = im2double(rgb2gray(imread("filtroEnA.JPG")));
+f2 = im2double(rgb2gray(imread("filtroEnB.JPG")));
+
+nmax = max(nor,[],'all');
+fmax = max(f2,[],'all');
+
+disp(abs(nmax-fmax)/nmax)
+
+maxf1 = max(f1,[],'all');
+minf1 = f1(2530, 3075);
+
+disp((maxf1 - minf1) / (maxf1 + minf1));
 
 
 
