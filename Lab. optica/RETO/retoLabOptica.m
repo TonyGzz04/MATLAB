@@ -51,7 +51,7 @@ figure; imagesc(phi - sphi);colormap('gray');
 
 
 fase_desenvuelta = unwrap_phase(phi-sphi);
-figure; imagesc(fase_desenvuelta);
+figure; imagesc(fase_desenvuelta); colormap('gray');
 
 theta = atan2(1,3.27);    % 1 altura, 3.27 (metros)
 z = fase_desenvuelta/(2*pi) * d/sin(theta);
