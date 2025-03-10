@@ -4,13 +4,28 @@ clc; clear; close all;
 
 cien_franjas = false;
 
+esfera = false;
+estrella = true;
+
 
 if cien_franjas == true
     img1 = imread('100_0.JPG');   % Read the image
     img2 = imread('100_1.JPG');
     img3 = imread('100_2.JPG');
     img4 = imread('100_3.JPG');
-else
+
+elseif esfera == true
+    img1 = imread('65_0.JPG');   % Read the image
+    img2 = imread('65_1.JPG');
+    img3 = imread('65_2.JPG');
+    img4 = imread('65_3.JPG');
+
+    simg1 = imread('s65_0.JPG');
+    simg2 = imread('s65_1.JPG');
+    simg3 = imread('s65_2.JPG');
+    simg4 = imread('s65_3.JPG');
+
+elseif estrella == true
     img1 = imread('est1.JPG');   % Read the image
     img2 = imread('est2.JPG');
     img3 = imread('est3.JPG');
@@ -56,7 +71,14 @@ figure; imagesc(fase_desenvuelta); colormap('gray');
 theta = atan2(1,3.27);    % 1 altura, 3.27 (metros)
 z = fase_desenvuelta/(2*pi) * d/sin(theta);
 
+x = 1:size(z,2);
+y = 1:size(z,1);
+[X, Y] = meshgrid(x, y);
 
+figure;
+surf(X, Y, z, z)
+
+% csvwrite('imagesc_points.csv', [X(:), Y(:), Z(:)]); grid(x, y);
 
 
 
